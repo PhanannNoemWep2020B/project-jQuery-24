@@ -3,364 +3,160 @@ function getUrl(){
     return url;
 }
 
+
 // =======================================================================================
 // how to get value or use value for get option 
 //========================================================================================
+
+
 $(document).ready(function(){
     requestApi();
-    $('#recipe').on('change', ()=>{
-        var recipe = $('#recipe').val();
-        getRecipe(recipe);
+    $('#select').on('change', ()=>{
+        var selected = $('#select').val();
+        getRecipe(selected);
     });
 })
+
 
 function requestApi(){
     $.ajax({
         dataType: 'json',
         url: getUrl(),
         success: (data) => chooseRecipe(data.recipes),
-        error: () => console.log("Conn't get API"),
+        error: () => console.log("Error"),
     });
 }
 
-var allData = [];
+
+var GetData = [];
 function chooseRecipe(recipe){
-    allData = recipe;
+    GetData = recipe;
     var option = "";
     recipe.forEach(item => {
         option += `<option value="${item.id}">${item.name}</option>`;
     });
-    $('#recipe').append(option);
+    $('#select').append(option);
+    $('#allMember').hide();
+    $('#ingredient').hide();
+    $('#show-instruction').hide();
+    $('#ruler').hide();
 }
+
 
 function getRecipe(id){
     //console.log(recipes);
-    allData.forEach(item => {
+    GetData.forEach(item => {
         if(item.id == id){
             showRecipe(item.name, item.iconUrl);
             showIngredient(item.ingredients);
+            showInstructions(item.instructions);
         } 
     })
 }
 
 
+//=======================================================================================
+//How to get value from option 
+//=======================================================================================
 
 function showRecipe(name, img){
     var result = "";
     result += `
         <tr>
-        <td> ${name}</td>
+            <td> ${name}</td>
             <td> <img src="${img}" class="img-fluid" width="200px"></td>
         </tr>
     `;
-    $('#recipe-result').html(result);
+    $('#table-result').html(result);
+    $('#allMember').show();
+    
 }
+
 
 function showIngredient(ing){
-    ing.forEach(item => {
-       display(item);
-    })
-}
-
-function display(output){
     var store = "";
+    ing.forEach(item => {
     store +=`
         <tr>
-        <td> <img src="${output.iconUrl}" class="img-fluid" width="100px"></td>
-            <td> ${output.name}</td>
-            <td> ${output.quantity}</td>
-            <td> ${output.unit}</td>
+            <td> <img src="${item.iconUrl}" width="50px"></td>
+            <td> ${item.quantity}</td>
+            <td> ${item.unit[0]}</td>
+            <td> ${item.name}</td>
         </tr>
     `;
-    $('#ingredient-result').append(store);
+})
+$('#ingredient-result').html(store);
+$('#ingredient').show();
+$('#ruler').show();
+}
+
+function showInstructions(instructioned){
+      var storeInstructions = "";
+      var catchsplit = instructioned.split("<step>");
+      for(let i = 1; i<catchsplit.length; i++){
+          storeInstructions += `
+            <p class="text-primary">Step${i}</p>
+            <p>${catchsplit[i]}</p>
+          `;
+          $('#instruction').html(storeInstructions);
+          $('#show-instruction').show();
+      }
+}
+
+//=======================================================================================
+//How to get value when click on button 
+//=======================================================================================
+
+
+// function showInstructions(instruction){
+//     var store = "";
+//     instruction.forEach(item => {
+//     store +=`
+//         <tr>
+//             <td> ${item.instructions}</td>
+//         </tr>
+//     `;
+// })
+//   $('#result-split').html(store);
+// }
+
+
+//=======================================================================================
+//How to get value when click on button 
+//=======================================================================================
+
+
+$(document).ready(function() {
+    $('#minus').on('click', function() {
+        var members = $('#member').val();
+        decreaseMember(members);
+    });
+    $('#add').on('click', function() {
+        var members = $('#member').val();
+        increaseMember(members);
+    });
+});
+
+
+function decreaseMember (minus) {
+    var member = parseInt(minus) - 1;
+    if(member >= 0) {
+      $('#member').val(member);
+      compute(member);
+    }
 }
 
 
+function increaseMember(add) {
+    var members = parseInt(add) + 1;
+    if(members <= 15) {
+        $('#member').val(members);
+        compute(members);
+    }
+}
+
+//=======================================================================================
+//
+//=======================================================================================
 
 
-// // //====================================================================
-
-// $(document).ready( () => {
-//     $('#result').on('change', () => {
-//         var store = $('#result').val();
-//         chooseRecipe(store);
-       
-//     });
-// });
-
-// var getAPI = (api) => {
-//     $.ajax({
-//         dataType: 'json',
-//         url: api,
-//         success: (data) => getRecipes(data),
-//         error: () => console.error("Cannot request data")
-//     });
-// }
-
-// function getRecipes(datas) {
-//     datas.recipes.forEach( recs => {
-//         getIngrediant(recs); 
-//     });
-// }
-
-// function getIngrediant(recipe) {
-//     recipe.ingredients.forEach(ing => {
-//         showIngrediantTable(ing);
-//     })
-// }
-
-// var showIngrediantTable = (show) => {
-//     var ingrediant = "";
-//     ingrediant += `
-//         <tr>
-//             <td><img src="${show.iconUrl}" width="100" class="img-fluid"></td>
-//             <td>${show.quantity}</td>
-//             <td>${show.unit[0]}</td>
-//             <td>${show.name}</td>
-//         </tr>
-//     `;
-//     $('#result').append(ingrediant);
-// }
-
-
-// var chooseRecipe = (myRecipe) => {
-//     var onlyNumber = parseInt(myRecipe);
-//     switch(onlyNumber) {
-//         case 0:
-//             getAPI(url);
-//             hideAlert();
-//             break;
-//         case 1:
-        
-//             demoOne();
-//             break;
-//         case 2:
-        
-//             demoTwo();
-//             break;
-//         default: console.warn("You choose nothing");
-//     }
-// } 
-
-// var demoTwo = () => {
-//     var show = "";
-//     show += `
-//         <div class="alert alert-warning">
-//             <strong>Good luck! </strong> try your best!
-//         </div>
-//     `;
-//     $('#result').html(show);
-// }
-// var hideAlert = () => {
-//     $('.alert').hide();
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// //================================================================================
-
-
-// var member;
-// $(document).ready(function () {
-//     getDefaultRecipe();
-//     $('button').on('click', () => {
-//         var newMember = $('#members').val();
-//         if(newMember != "") {
-//             updateRecipe();
-//             member = newMember;
-//         }
-        
-//     })
-// });
-// function getDefaultRecipe() {
-//     $.ajax({
-//         dataType: 'json',
-//         url: getUrl(),
-//         success: (data) => defaultRecipe(data),
-//         error: () => getError(),
-//     });
-// }
-// function updateRecipe() {
-//     $.ajax({
-//         dataType: 'json',
-//         url: getUrl(),
-//         success: (data) => getRecipe(data),
-//         error: () => getError(),
-//     });
-// }
-// function getUrl() {
-//     var url = "https://raw.githubusercontent.com/radytrainer/test-api/master/test.json";
-//     return url;
-// }
-
-// function getError() { console.log("Error") }
-
-// function getRecipe(myData) {
-//     var result = "";
-//     myData.recipes.forEach( recipe => {
-//         updateIngredient(recipe.ingredients);
-//         result += `
-//             <tr>
-//                 <td><img src="${recipe.iconUrl}" width="100"></td>
-//                 <td>${recipe.name}</td>
-//                 <td>${recipe.nbGuests * addMember(member)}</td>
-//             </tr>
-//         `;
-//     });
-//     printOut("recipe",result);
-// }
-
-// function defaultRecipe(myData) {
-//     var result = "";
-//     myData.recipes.forEach( recipe => {
-//         defaultIngredient(recipe.ingredients);
-//         result += `
-//             <tr>
-//                 <td><img src="${recipe.iconUrl}" width="100"></td>
-//                 <td>${recipe.name}</td>
-//                 <td>${recipe.nbGuests}</td>
-//             </tr>
-//         `;
-//     });
-//     printOut("recipe",result);
-// }
-
-// function defaultIngredient(ing) {
-//     result = "";
-//     ing.forEach(item => {
-//         result += `
-//             <tr>
-//                 <td><img src="${item.iconUrl}" width="100"></td>
-//                 <td>${item.name}</td>
-//                 <td>${item.quantity}</td>
-//                 <td>${item.unit[0]}</td>
-//             </tr>
-//         `;
-//     });
-//     printOut('ingredient', result);  
-// }
-
-// function updateIngredient(ing) {
-//     result = "";
-//     ing.forEach(item => {
-//         result += `
-//             <tr>
-//                 <td><img src="${item.iconUrl}" width="100"></td>
-//                 <td>${item.name}</td>
-//                 <td>${item.quantity * addMember(member)}</td>
-//                 <td>${item.unit[0]}</td>
-//             </tr>
-//         `;
-//     });
-//     printOut('ingredient', result);  
-// }
-
-// function printOut(elmentId, out) {
-//     $('#' + elmentId).html(out);
-// }
-
-// function addMember(member) {
-//     return  parseInt(member);
-// }
