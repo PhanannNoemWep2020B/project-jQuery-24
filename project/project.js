@@ -2,19 +2,30 @@ function getUrl(){
     var url ="https://raw.githubusercontent.com/radytrainer/test-api/master/test.json";
     return url;
 }
-
-
-// =======================================================================================
 // how to get value or use value for get option 
-//========================================================================================
-
-
 $(document).ready(function(){
     requestApi();
     $('#select').on('change', ()=>{
         var selected = $('#select').val();
         getRecipe(selected);
     });
+    //When we clcik on button add
+    $('#add').on('click', function(){
+        add();
+        //declear for catch or select option from id
+        var selected = $('#select').val();
+        //get value when user click
+        var increment = $('#member').val();
+        updateRecipe(selected,increment)
+    })
+    //when we click on button minus
+    $('#minus').on('click', function(){
+        minus();
+        var selecte = $('#select').val();
+        var decrement = $('#member').val();
+        updateRecipe(selecte,decrement);
+        // updateRcipe(selected, increment);
+    })
 })
 
 
@@ -27,7 +38,7 @@ function requestApi(){
     });
 }
 
-
+//selete all value in recipe or when we need choose option
 var GetData = [];
 function chooseRecipe(recipe){
     GetData = recipe;
@@ -42,23 +53,20 @@ function chooseRecipe(recipe){
     $('#ruler').hide();
 }
 
-
+//For show name, image of food near step
 function getRecipe(id){
-    //console.log(recipes);
     GetData.forEach(item => {
         if(item.id == id){
             showRecipe(item.name, item.iconUrl);
             showIngredient(item.ingredients);
             showInstructions(item.instructions);
+            //catch member from id(member)
+            $('#member').val(item.nbGuests);
+            Member = $('#member').val();
         } 
     })
 }
-
-
-//=======================================================================================
-//How to get value from option 
-//=======================================================================================
-
+//For show name , image on Number of persons or under option choose 
 function showRecipe(name, img){
     var result = "";
     result += `
@@ -71,8 +79,8 @@ function showRecipe(name, img){
     $('#allMember').show();
     
 }
-
-
+//For show name, image 
+// Old value of show name, image near step
 function showIngredient(ing){
     var store = "";
     ing.forEach(item => {
@@ -89,7 +97,26 @@ $('#ingredient-result').html(store);
 $('#ingredient').show();
 $('#ruler').show();
 }
-
+//New value for show name, image near step when we click on button add or minus 
+var updateDate=(ing ,increment)=>{
+    resultUpdate = "";
+    ing.forEach(item =>{
+        //item.quantity =  old value// parsetInt(increment) = new member // Member = new member 
+       
+        var addIngredient = item.quantity * parseInt(increment) / Member;
+        console.log(item.quantity);
+        resultUpdate+= `
+        <tr>
+            <td> <img src="${item.iconUrl}" class="img-fluid" width="50px"> </td>
+            <td> ${addIngredient}</td>
+            <td> ${item.unit[0]} </td>
+            <td> ${item.name} </td>
+        </tr>
+        `; 
+    })
+    $('#ingredient-result').html(resultUpdate);
+}
+//How to catch split 
 function showInstructions(instructioned){
       var storeInstructions = "";
       var catchsplit = instructioned.split("<step>");
@@ -103,60 +130,28 @@ function showInstructions(instructioned){
       }
 }
 
-//=======================================================================================
+
+// update recipe of add
+var updateRecipe = (ricipeId,increment) => {
+    GetData.forEach(item => {
+        if(item.id == ricipeId){
+            updateDate(item.ingredients, increment);
+            $("#members").val(increment);
+        }
+    })
+}
 //How to get value when click on button 
-//=======================================================================================
-
-
-// function showInstructions(instruction){
-//     var store = "";
-//     instruction.forEach(item => {
-//     store +=`
-//         <tr>
-//             <td> ${item.instructions}</td>
-//         </tr>
-//     `;
-// })
-//   $('#result-split').html(store);
-// }
-
-
-//=======================================================================================
-//How to get value when click on button 
-//=======================================================================================
-
-
-$(document).ready(function() {
-    $('#minus').on('click', function() {
-        var members = $('#member').val();
-        decreaseMember(members);
-    });
-    $('#add').on('click', function() {
-        var members = $('#member').val();
-        increaseMember(members);
-    });
-});
-
-
-function decreaseMember (minus) {
-    var member = parseInt(minus) - 1;
-    if(member >= 0) {
-      $('#member').val(member);
-      compute(member);
+function add(){
+    var resuladd = $('#member').val();
+    var resuladd = parseInt(resuladd) + 1;
+    if(resuladd <= 15){
+    $("#member").val(resuladd);
     }
 }
-
-
-function increaseMember(add) {
-    var members = parseInt(add) + 1;
-    if(members <= 15) {
-        $('#member').val(members);
-        compute(members);
+function minus(){
+    var resulminus = $('#member').val();
+    var resulminus = parseInt(resulminus) - 1;
+    if(resulminus >=0){
+    $("#member").val(resulminus);
     }
 }
-
-//=======================================================================================
-//
-//=======================================================================================
-
-
