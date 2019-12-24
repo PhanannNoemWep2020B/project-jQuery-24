@@ -16,19 +16,17 @@ $(document).ready(function(){
         var selected = $('#select').val();
         //get value when user click
         var increment = $('#member').val();
-        updateRecipe(selected,increment)
+        updateRecipe(selected, increment)
     })
     //when we click on button minus
     $('#minus').on('click', function(){
         minus();
         var selecte = $('#select').val();
         var decrement = $('#member').val();
-        updateRecipe(selecte,decrement);
-        // updateRcipe(selected, increment);
+        updateRecipe(selecte, decrement);
     })
 })
-
-
+//Request API 
 function requestApi(){
     $.ajax({
         dataType: 'json',
@@ -37,7 +35,6 @@ function requestApi(){
         error: () => console.log("Error"),
     });
 }
-
 //selete all value in recipe or when we need choose option
 var GetData = [];
 function chooseRecipe(recipe){
@@ -47,12 +44,12 @@ function chooseRecipe(recipe){
         option += `<option value="${item.id}">${item.name}</option>`;
     });
     $('#select').append(option);
+    //For hide if we want see. we can select on option
     $('#allMember').hide();
     $('#ingredient').hide();
     $('#show-instruction').hide();
     $('#ruler').hide();
 }
-
 //For show name, image of food near step
 function getRecipe(id){
     GetData.forEach(item => {
@@ -69,7 +66,7 @@ function getRecipe(id){
 //For show name , image on Number of persons or under option choose 
 function showRecipe(name, img){
     var result = "";
-    result += `
+      result += `
         <tr>
             <td> ${name}</td>
             <td> <img src="${img}" class="img-fluid" width="200px"></td>
@@ -77,20 +74,19 @@ function showRecipe(name, img){
     `;
     $('#table-result').html(result);
     $('#allMember').show();
-    
 }
-//For show name, image 
-// Old value of show name, image near step
+//For show name, image, old value of show name, image near step
 function showIngredient(ing){
     var store = "";
     ing.forEach(item => {
-    store +=`
+      store +=`
         <tr>
             <td> <img src="${item.iconUrl}" width="50px"></td>
             <td> ${item.quantity}</td>
             <td> ${item.unit[0]}</td>
             <td> ${item.name}</td>
         </tr>
+
     `;
 })
 $('#ingredient-result').html(store);
@@ -129,8 +125,6 @@ function showInstructions(instructioned){
           $('#show-instruction').show();
       }
 }
-
-
 // update recipe of add
 var updateRecipe = (ricipeId,increment) => {
     GetData.forEach(item => {
@@ -140,18 +134,19 @@ var updateRecipe = (ricipeId,increment) => {
         }
     })
 }
-//How to get value when click on button 
+//How to get value of add when click on button. 
 function add(){
-    var resuladd = $('#member').val();
-    var resuladd = parseInt(resuladd) + 1;
-    if(resuladd <= 15){
-    $("#member").val(resuladd);
+    var displayadd = $('#member').val();
+    var displayadd = parseInt(displayadd) + 1;
+    if(displayadd <= 15){
+       $("#member").val(displayadd);
     }
 }
+//How to get value of minus when click
 function minus(){
-    var resulminus = $('#member').val();
-    var resulminus = parseInt(resulminus) - 1;
-    if(resulminus >=0){
-    $("#member").val(resulminus);
+    var displayminus = $('#member').val();
+    var displayminus = parseInt(displayminus) - 1;
+    if(displayminus >= 0){
+    $("#member").val(displayminus);
     }
 }
